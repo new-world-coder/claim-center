@@ -1,0 +1,24 @@
+# Node
+node_modules/
+dist/
+build/
+
+# Java
+target/
+*.log
+
+# IDE
+.idea/
+.vscode/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Env
+.env
+
+# OS
+.DS_Store
+

@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: claim_center
+      POSTGRES_USER: claimcenter
+      POSTGRES_PASSWORD: claimcenter
+    ports: ["5432:5432"]
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  api-gateway:
+    build: ../../services/api-gateway
+    ports: ["8080:8080"]
+    depends_on: [postgres]
+  auth-service:
+    build: ../../services/auth-service
+    ports: ["8081:8081"]
+    depends_on: [postgres]
+  tenant-service:
+    build: ../../services/tenant-service
+    ports: ["8082:8082"]
+    depends_on: [postgres]
+  policy-service:
+    build: ../../services/policy-service
+    ports: ["8083:8083"]
+    depends_on: [postgres]
+  claim-service:
+    build: ../../services/claim-service
+    ports: ["8084:8084"]
+    depends_on: [postgres]
+  customer-service:
+    build: ../../services/customer-service
+    ports: ["8085:8085"]
+    depends_on: [postgres]
+  document-service:
+    build: ../../services/document-service
+    ports: ["8086:8086"]
+    depends_on: [postgres]
+  notification-service:
+    build: ../../services/notification-service
+    ports: ["8087:8087"]
+    depends_on: [postgres]
+  audit-service:
+    build: ../../services/audit-service
+    ports: ["8088:8088"]
+    depends_on: [postgres]
+  frontend:
+    build: ../../frontend
+    ports: ["5173:5173"]
+    depends_on: [api-gateway]
+
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    volumes:
+      - ../../observability/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports: ["9090:9090"]
+  grafana:
+    image: grafana/grafana:11.2.2
+    ports: ["3000:3000"]

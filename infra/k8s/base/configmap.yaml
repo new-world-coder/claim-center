@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: claim-center-config
+  namespace: claim-center
+data:
+  SPRING_PROFILES_ACTIVE: k8s

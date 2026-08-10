@@ -1,0 +1,14 @@
+server:
+  port: 8084
+spring:
+  application:
+    name: claim-service
+  datasource:
+    url: jdbc:postgresql://postgres:5432/claim_center
+    username: claimcenter
+    password: claimcenter
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus

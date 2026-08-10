@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: claim-service
+  namespace: claim-center
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: claim-service
+  template:
+    metadata:
+      labels:
+        app: claim-service
+    spec:
+      containers:
+        - name: claim-service
+          image: ghcr.io/example/claim-center/claim-service:latest
+          ports:
+            - containerPort: 8084
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: claim-service
+  namespace: claim-center
+spec:
+  selector:
+    app: claim-service
+  ports:
+    - port: 8084
+      targetPort: 8084

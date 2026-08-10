@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.claimcenter</groupId>
+  <artifactId>claim-center</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>services/api-gateway</module>
+    <module>services/auth-service</module>
+    <module>services/tenant-service</module>
+    <module>services/policy-service</module>
+    <module>services/claim-service</module>
+    <module>services/customer-service</module>
+    <module>services/document-service</module>
+    <module>services/notification-service</module>
+    <module>services/audit-service</module>
+  </modules>
+</project>
+
