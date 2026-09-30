@@ -18,6 +18,11 @@ spec:
           image: ghcr.io/example/claim-center/api-gateway:latest
           ports:
             - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: claim-center-config
+            - secretRef:
+                name: claim-center-secrets
 ---
 apiVersion: v1
 kind: Service

@@ -1,1 +1,14 @@
-{"title":"Claim Center Overview","panels":[{"title":"API latency"},{"title":"Error rate"},{"title":"Throughput"},{"title":"CPU usage"},{"title":"Memory usage"},{"title":"Requests per tenant"}]}
+{
+  "title": "Claim Center",
+  "uid": "claim-center",
+  "panels": [
+    { "title": "API latency", "type": "timeseries", "targets": [{ "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket[5m])) by (le, application))" }] },
+    { "title": "Error rate", "type": "timeseries", "targets": [{ "expr": "sum(rate(http_server_requests_seconds_count{status=~\"5..\"}[5m])) by (application)" }] },
+    { "title": "Throughput", "type": "timeseries", "targets": [{ "expr": "sum(rate(http_server_requests_seconds_count[5m])) by (application)" }] },
+    { "title": "CPU usage", "type": "timeseries", "targets": [{ "expr": "process_cpu_usage" }] },
+    { "title": "Memory usage", "type": "timeseries", "targets": [{ "expr": "sum(jvm_memory_used_bytes) by (application)" }] },
+    { "title": "Requests per tenant", "type": "timeseries", "targets": [{ "expr": "sum(rate(http_server_requests_seconds_count[5m])) by (application)" }] }
+  ],
+  "schemaVersion": 39,
+  "version": 1
+}

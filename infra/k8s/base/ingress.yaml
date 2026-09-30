@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: claim-center-ingress
+  name: claim-center
   namespace: claim-center
 spec:
   rules:
@@ -12,5 +12,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: api-gateway
-                port: { number: 80 }
+                name: frontend
+                port:
+                  number: 80

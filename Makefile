@@ -1,35 +1,16 @@
-SHELL := /bin/zsh
-KIND_CLUSTER := claim-center-local
+SHELL := /bin/bash
 
-.PHONY: start stop build up down kind-up kind-down k8s-apply k8s-delete test
+.PHONY: start stop test package
 
-start: build up kind-up k8s-apply
+start: package
+	docker compose -f infra/docker/docker-compose.yml up -d --build
 
-stop: k8s-delete kind-down down
-
-build:
-	docker compose -f infra/docker/docker-compose.yml build
-
-up:
-	docker compose -f infra/docker/docker-compose.yml up -d
-
-down:
+stop:
 	docker compose -f infra/docker/docker-compose.yml down
 
-kind-up:
-	kind get clusters | rg -q "^$(KIND_CLUSTER)$$" || kind create cluster --name $(KIND_CLUSTER) --config infra/k8s/kind-config.yaml
-
-kind-down:
-	kind delete cluster --name $(KIND_CLUSTER) || true
-
-k8s-apply:
-	kubectl apply -f infra/k8s/base
-	kubectl apply -f infra/k8s/hpa
-
-k8s-delete:
-	kubectl delete -f infra/k8s/hpa --ignore-not-found
-	kubectl delete -f infra/k8s/base --ignore-not-found
+package:
+	mvn -B -DskipTests package
 
 test:
-	k6 run tests/load/tenants-100-users-1000.js
-
+	mvn -B test
+	cd frontend && npm install && npm run lint && npm run build
