@@ -32,6 +32,12 @@ public class ClaimEntity {
     private String status;
     @Column(name = "fraud_flag", nullable = false)
     private boolean fraudFlag;
+    @Column(name = "fraud_score", nullable = false)
+    private int fraudScore;
+    @Column(name = "fraud_band", nullable = false)
+    private String fraudBand;
+    @Column(name = "fraud_reasons", nullable = false, length = 2000)
+    private String fraudReasons;
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -53,6 +59,12 @@ public class ClaimEntity {
     public void setStatus(String status) { this.status = status; }
     public boolean isFraudFlag() { return fraudFlag; }
     public void setFraudFlag(boolean fraudFlag) { this.fraudFlag = fraudFlag; }
+    public int getFraudScore() { return fraudScore; }
+    public void setFraudScore(int fraudScore) { this.fraudScore = fraudScore; }
+    public String getFraudBand() { return fraudBand; }
+    public void setFraudBand(String fraudBand) { this.fraudBand = fraudBand; }
+    public String getFraudReasons() { return fraudReasons; }
+    public void setFraudReasons(String fraudReasons) { this.fraudReasons = fraudReasons; }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 }

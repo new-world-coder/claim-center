@@ -62,6 +62,9 @@ CREATE TABLE IF NOT EXISTS claims (
     description VARCHAR(2000) NOT NULL,
     status VARCHAR(32) NOT NULL,
     fraud_flag BOOLEAN NOT NULL,
+    fraud_score INTEGER NOT NULL DEFAULT 0,
+    fraud_band VARCHAR(16) NOT NULL DEFAULT 'LOW',
+    fraud_reasons VARCHAR(2000) NOT NULL DEFAULT '',
     created_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_claims_tenant_id ON claims (tenant_id);
@@ -101,3 +104,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_audit_logs_tenant_id ON audit_logs (tenant_id);
+
+ALTER TABLE claims ADD COLUMN IF NOT EXISTS fraud_score INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE claims ADD COLUMN IF NOT EXISTS fraud_band VARCHAR(16) NOT NULL DEFAULT 'LOW';
+ALTER TABLE claims ADD COLUMN IF NOT EXISTS fraud_reasons VARCHAR(2000) NOT NULL DEFAULT '';

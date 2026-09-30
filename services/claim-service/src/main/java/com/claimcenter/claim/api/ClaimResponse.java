@@ -1,6 +1,7 @@
 package com.claimcenter.claim.api;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 public record ClaimResponse(
@@ -11,6 +12,9 @@ public record ClaimResponse(
         BigDecimal amount,
         String description,
         String status,
-        boolean fraudFlag
+        boolean fraudFlag,
+        int fraudScore,
+        String fraudBand,
+        List<String> fraudReasons
 ) {
 }

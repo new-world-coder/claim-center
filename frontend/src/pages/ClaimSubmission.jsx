@@ -35,7 +35,12 @@ export default function ClaimSubmission() {
       <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
       <button type="submit">Submit</button>
       {error && <div className="error">{error}</div>}
-      {result && <div>Created {result.claimNumber} with status {result.status}</div>}
+      {result && (
+        <div>
+          Created {result.claimNumber} with status {result.status}. Fraud score {result.fraudScore} ({result.fraudBand}).
+          {(result.fraudReasons || []).length > 0 && <div>{result.fraudReasons.join("; ")}</div>}
+        </div>
+      )}
     </form>
   );
 }

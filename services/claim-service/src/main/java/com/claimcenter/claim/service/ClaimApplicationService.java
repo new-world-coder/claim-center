@@ -17,7 +17,9 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -57,7 +59,15 @@ public class ClaimApplicationService {
         if (request.amount().compareTo(policy.coverageAmount()) > 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Amount exceeds policy coverage");
         }
-        String status = fraudDetector.statusFor(request.amount());
+        Instant submittedAt = Instant.now();
+        int recentClaims = (int) claimRepository.countByPolicyIdAndCreatedAtAfter(
+                policy.id(), submittedAt.minus(Duration.ofDays(30)));
+        FraudScore fraudScore = fraudDetector.score(new FraudCase(
+                request.amount(),
+                policy.coverageAmount(),
+                request.description(),
+                recentClaims,
+                submittedAt));
         ClaimEntity entity = new ClaimEntity();
         entity.setId(UUID.randomUUID());
         entity.setTenantId(TenantContext.get());
@@ -66,9 +76,12 @@ public class ClaimApplicationService {
         entity.setCustomerId(policy.customerId());
         entity.setAmount(request.amount());
         entity.setDescription(request.description());
-        entity.setStatus(status);
-        entity.setFraudFlag(fraudDetector.flagged(status));
-        entity.setCreatedAt(Instant.now());
+        entity.setStatus(fraudScore.status());
+        entity.setFraudFlag(fraudScore.flagged());
+        entity.setFraudScore(fraudScore.score());
+        entity.setFraudBand(fraudScore.band());
+        entity.setFraudReasons(String.join("; ", fraudScore.reasons()));
+        entity.setCreatedAt(submittedAt);
         ClaimEntity saved = claimRepository.save(entity);
         notify(saved);
         audit("CLAIM_SUBMITTED", saved);
@@ -121,7 +134,8 @@ public class ClaimApplicationService {
                     .body(Map.of(
                             "action", action,
                             "resourceName", claim.getClaimNumber(),
-                            "details", claim.getStatus() + " amount " + claim.getAmount()))
+                            "details", claim.getStatus() + " score " + claim.getFraudScore()
+                                    + " " + claim.getFraudBand() + " amount " + claim.getAmount()))
                     .retrieve()
                     .toBodilessEntity();
         } catch (RuntimeException exception) {
@@ -129,8 +143,16 @@ public class ClaimApplicationService {
         }
     }
 
+    private List<String> reasons(String stored) {
+        if (stored == null || stored.isBlank()) {
+            return List.of();
+        }
+        return Arrays.stream(stored.split("; ")).filter(reason -> !reason.isBlank()).toList();
+    }
+
     private ClaimResponse toResponse(ClaimEntity entity) {
         return new ClaimResponse(entity.getId(), entity.getClaimNumber(), entity.getPolicyId(), entity.getCustomerId(),
-                entity.getAmount(), entity.getDescription(), entity.getStatus(), entity.isFraudFlag());
+                entity.getAmount(), entity.getDescription(), entity.getStatus(), entity.isFraudFlag(),
+                entity.getFraudScore(), entity.getFraudBand(), reasons(entity.getFraudReasons()));
     }
 }
