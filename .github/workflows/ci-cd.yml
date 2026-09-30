@@ -48,15 +48,33 @@ jobs:
           scan-ref: .
           severity: HIGH,CRITICAL
           exit-code: "1"
-      - name: SAST
-        uses: github/codeql-action/init@v3
+
+  codeql:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: java-kotlin
+            build-mode: none
+          - language: javascript
+            build-mode: none
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
         with:
-          languages: java-kotlin, javascript
-      - name: CodeQL analyze
-        uses: github/codeql-action/analyze@v3
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+      - name: Analyze
+        uses: github/codeql-action/analyze@v4
 
   images:
-    needs: [backend, frontend, security]
+    needs: [backend, frontend, security, codeql]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
