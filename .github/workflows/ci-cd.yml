@@ -76,19 +76,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Check Google Cloud credentials
+        id: gcp
+        env:
+          GCP_WIF: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          GCP_SA: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+        run: |
+          if [ -n "$GCP_WIF" ] && [ -n "$GCP_SA" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "Google Cloud credentials are not configured, so deploy was skipped."
+          fi
       - uses: google-github-actions/auth@v2
-        if: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER != '' && secrets.GCP_SERVICE_ACCOUNT != '' }}
+        if: steps.gcp.outputs.configured == 'true'
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - uses: google-github-actions/setup-gcloud@v2
-        if: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER != '' && secrets.GCP_SERVICE_ACCOUNT != '' }}
+        if: steps.gcp.outputs.configured == 'true'
       - name: Deploy to GKE
-        if: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER != '' && secrets.GCP_SERVICE_ACCOUNT != '' }}
+        if: steps.gcp.outputs.configured == 'true'
         run: |
           gcloud container clusters get-credentials claim-center-gke --region us-central1
           kubectl apply -f infra/k8s/base
           kubectl apply -f infra/k8s/hpa
-      - name: Skip deploy
-        if: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER == '' || secrets.GCP_SERVICE_ACCOUNT == '' }}
-        run: echo "Google Cloud credentials are not configured, so deploy was skipped."
