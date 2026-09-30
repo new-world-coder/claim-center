@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import api, { errorMessage } from "../services/api";
 
+function bandClass(band) {
+  if (band === "HIGH") return "band-high";
+  if (band === "MEDIUM") return "band-medium";
+  return "band-low";
+}
+
 export default function ClaimReview() {
   const [rows, setRows] = useState([]);
   const [error, setError] = useState("");
@@ -28,14 +34,15 @@ export default function ClaimReview() {
       {error && <div className="error">{error}</div>}
       <div className="panel">
         <table>
-          <thead><tr><th>Number</th><th>Status</th><th>Amount</th><th>Fraud</th><th></th></tr></thead>
+          <thead><tr><th>Number</th><th>Status</th><th>Amount</th><th>Score</th><th>Signals</th><th></th></tr></thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id}>
                 <td>{row.claimNumber}</td>
                 <td>{row.status}</td>
                 <td>{row.amount}</td>
-                <td>{row.fraudFlag ? "Yes" : "No"}</td>
+                <td><span className={bandClass(row.fraudBand)}>{row.fraudScore} {row.fraudBand}</span></td>
+                <td>{(row.fraudReasons || []).join("; ") || "None"}</td>
                 <td>
                   <button type="button" onClick={() => decide(row.id, "APPROVED")}>Approve</button>
                   <button type="button" className="ghost" onClick={() => decide(row.id, "REJECTED")}>Reject</button>

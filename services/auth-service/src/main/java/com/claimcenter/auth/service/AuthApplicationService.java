@@ -11,8 +11,12 @@ import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +32,7 @@ import java.util.UUID;
 @Service
 @Transactional
 public class AuthApplicationService {
+    private static final Logger LOG = LoggerFactory.getLogger(AuthApplicationService.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final String jwtSecret;
@@ -56,6 +61,13 @@ public class AuthApplicationService {
                 "role", user.getRole(),
                 "username", user.getUsername()
         );
+    }
+
+    public Map<String, String> logout() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication == null ? "" : authentication.getName();
+        LOG.info("Logout {}", username);
+        return Map.of("status", "logged_out", "username", username);
     }
 
     public Map<String, String> createUser(CreateUserRequest request) {

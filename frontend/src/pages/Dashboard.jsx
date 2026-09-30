@@ -26,12 +26,17 @@ export default function Dashboard() {
       <div className="panel">
         <h2>Recent claims</h2>
         <table>
-          <thead><tr><th>Number</th><th>Status</th><th>Amount</th></tr></thead>
+          <thead><tr><th>Number</th><th>Status</th><th>Amount</th><th>Score</th></tr></thead>
           <tbody>
             {claims.map((claim) => (
-              <tr key={claim.id}><td>{claim.claimNumber}</td><td>{claim.status}</td><td>{claim.amount}</td></tr>
+              <tr key={claim.id}>
+                <td>{claim.claimNumber}</td>
+                <td>{claim.status}</td>
+                <td>{claim.amount}</td>
+                <td>{claim.fraudScore} {claim.fraudBand}</td>
+              </tr>
             ))}
-            {claims.length === 0 && <tr><td colSpan="3">No claims yet.</td></tr>}
+            {claims.length === 0 && <tr><td colSpan="4">No claims yet.</td></tr>}
           </tbody>
         </table>
       </div>

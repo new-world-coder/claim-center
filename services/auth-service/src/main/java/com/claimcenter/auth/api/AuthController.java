@@ -24,6 +24,11 @@ public class AuthController {
         return authApplicationService.login(request);
     }
 
+    @PostMapping("/logout")
+    public Map<String, String> logout() {
+        return authApplicationService.logout();
+    }
+
     @PostMapping("/users")
     @PreAuthorize("hasAnyRole('PLATFORM_ADMIN','TENANT_ADMIN')")
     public Map<String, String> createUser(@Valid @RequestBody CreateUserRequest request) {

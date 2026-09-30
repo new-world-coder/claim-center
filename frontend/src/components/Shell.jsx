@@ -1,5 +1,6 @@
-import { Link, Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Link, Route, Routes } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import api from "../services/api";
 import { can, ROLE_LABELS } from "../utils/roles";
 import DashboardPage from "../pages/Dashboard";
 import PolicyPage from "../pages/PolicyManagement";
@@ -19,8 +20,22 @@ const links = [
 
 export default function Shell() {
   const { session, logout } = useAuth();
-  const navigate = useNavigate();
-  if (!session) return <Navigate to="/login" replace />;
+  if (!session) return null;
+
+  function signOut() {
+    const token = sessionStorage.getItem("access_token");
+    const tenantId = sessionStorage.getItem("tenant_id");
+    logout();
+    api.post("/auth/logout", null, {
+      timeout: 4000,
+      headers: {
+        Authorization: token ? `Bearer ${token}` : undefined,
+        "X-Tenant-Id": tenantId || undefined,
+      },
+    }).catch(() => {
+      // The local session is already cleared.
+    });
+  }
   return (
     <div className="app-shell">
       <aside className="nav">
@@ -41,14 +56,8 @@ export default function Shell() {
               </Link>
             ))}
         </nav>
-        <button
-          className="ghost"
-          onClick={() => {
-            logout();
-            navigate("/login");
-          }}
-        >
-          Sign out
+        <button className="ghost" type="button" onClick={signOut}>
+          Log out
         </button>
       </aside>
       <main className="main">

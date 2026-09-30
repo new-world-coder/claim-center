@@ -47,6 +47,10 @@ button {
   cursor: pointer;
 }
 .ghost { background: transparent; color: #1f2a24; border: 1px solid #1f2a24; }
+.nav button.ghost { color: #f6f1e7; border-color: rgba(246, 241, 231, 0.5); margin-top: auto; }
+.band-high { color: #9f1239; font-weight: 700; }
+.band-medium { color: #9a3412; font-weight: 700; }
+.band-low { color: #3f6212; font-weight: 700; }
 .error { color: #9f1239; }
 .login {
   min-height: 100vh;
