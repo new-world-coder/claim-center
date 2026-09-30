@@ -1,7 +1,20 @@
 # Claim Center
 
 Insurance operations platform for many carriers. Each carrier is a tenant. Small carriers share a database. Large carriers get a dedicated database. Tenant identity comes from the signed JWT.
+## Current vs. Target Architecture
 
+The current architecture uses a synchronous REST-based flow for claim processing. The existing service design is documented in [docs/architecture.md](docs/architecture.md).
+
+The target architecture, tracked in [issue #3](https://github.com/new-world-coder/claim-center/issues/3), moves toward an event-driven design while preserving the transactional core.
+
+Planned capabilities include:
+- Transactional outbox and event-driven processing
+- Asynchronous fraud and downstream consumers
+- Search and replay support
+- Degraded and emergency operating modes
+- Disaster recovery and observability improvements
+
+Architecture tradeoffs will be documented in [issue #7](https://github.com/new-world-coder/claim-center/issues/7).
 ## Run locally
 
 ```bash
