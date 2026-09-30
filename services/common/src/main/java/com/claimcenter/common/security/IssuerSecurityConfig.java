@@ -18,7 +18,8 @@ public class IssuerSecurityConfig {
     @Bean
     SecurityFilterChain issuerSecurityFilterChain(HttpSecurity http, JwtTenantFilter jwtTenantFilter,
                                                   JwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        // Bearer tokens are sent on each request. There is no session cookie for a cross-site request to replay.
+        http.csrf(AbstractHttpConfigurer::disable) // codeql[java/spring-disabled-csrf-protection]
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/token", "/actuator/health", "/actuator/prometheus", "/actuator/metrics",
