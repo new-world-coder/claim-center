@@ -4,11 +4,30 @@ spring:
   application:
     name: claim-service
   datasource:
-    url: jdbc:postgresql://postgres:5432/claim_center
-    username: claimcenter
-    password: claimcenter
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/claim_center}
+    username: ${DB_USER:claimcenter}
+    password: ${DB_PASSWORD:claimcenter}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
 management:
   endpoints:
     web:
       exposure:
         include: health,metrics,prometheus
+claimcenter:
+  jwt:
+    secret: ${JWT_SECRET:0123456789abcdef0123456789abcdef}
+  security:
+    mode: resource
+  tenancy:
+    routing: true
+  policy-url: ${POLICY_SERVICE_URL:http://localhost:8083}
+  notification-url: ${NOTIFICATION_SERVICE_URL:http://localhost:8087}
+  audit-url: ${AUDIT_SERVICE_URL:http://localhost:8088}

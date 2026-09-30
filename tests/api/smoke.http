@@ -1,4 +1,0 @@
-POST http://localhost:8081/api/auth/token
-Content-Type: application/json
-
-{ "username": "admin", "password": "admin" }

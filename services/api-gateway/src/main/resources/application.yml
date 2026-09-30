@@ -1,48 +1,51 @@
 server:
   port: 8080
-
 spring:
   application:
     name: api-gateway
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
       routes:
         - id: auth-service
-          uri: http://auth-service:8081
+          uri: ${AUTH_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/auth/**
         - id: tenant-service
-          uri: http://tenant-service:8082
+          uri: ${TENANT_SERVICE_URL:http://localhost:8082}
           predicates:
             - Path=/api/tenants/**
         - id: policy-service
-          uri: http://policy-service:8083
+          uri: ${POLICY_SERVICE_URL:http://localhost:8083}
           predicates:
             - Path=/api/policies/**
         - id: claim-service
-          uri: http://claim-service:8084
+          uri: ${CLAIM_SERVICE_URL:http://localhost:8084}
           predicates:
             - Path=/api/claims/**
         - id: customer-service
-          uri: http://customer-service:8085
+          uri: ${CUSTOMER_SERVICE_URL:http://localhost:8085}
           predicates:
             - Path=/api/customers/**
         - id: document-service
-          uri: http://document-service:8086
+          uri: ${DOCUMENT_SERVICE_URL:http://localhost:8086}
           predicates:
             - Path=/api/documents/**
         - id: notification-service
-          uri: http://notification-service:8087
+          uri: ${NOTIFICATION_SERVICE_URL:http://localhost:8087}
           predicates:
             - Path=/api/notifications/**
         - id: audit-service
-          uri: http://audit-service:8088
+          uri: ${AUDIT_SERVICE_URL:http://localhost:8088}
           predicates:
             - Path=/api/audit/**
-
 management:
   endpoints:
     web:
       exposure:
         include: health,metrics,prometheus
-

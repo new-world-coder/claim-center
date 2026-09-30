@@ -18,6 +18,11 @@ spec:
           image: ghcr.io/example/claim-center/notification-service:latest
           ports:
             - containerPort: 8087
+          envFrom:
+            - configMapRef:
+                name: claim-center-config
+            - secretRef:
+                name: claim-center-secrets
 ---
 apiVersion: v1
 kind: Service

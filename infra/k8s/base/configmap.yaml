@@ -4,4 +4,5 @@ metadata:
   name: claim-center-config
   namespace: claim-center
 data:
-  SPRING_PROFILES_ACTIVE: k8s
+  JWT_SECRET: 0123456789abcdef0123456789abcdef
+  DB_URL: jdbc:postgresql://postgres:5432/claim_center
