@@ -61,6 +61,9 @@ public class DedicatedDatabaseProvisioner {
     }
 
     public void seedSample(String databaseName, String tenantId) {
+        if (!databaseName.matches("[a-z][a-z0-9_]{0,40}") || !tenantId.matches("[a-z][a-z0-9_]{0,40}")) {
+            throw new IllegalArgumentException("Invalid tenant identifier");
+        }
         String dedicatedUrl = TenantDatabaseRegistry.swapDatabase(jdbcUrl, databaseName);
         String customerId = "33333333-3333-3333-3333-333333333333";
         String policyId = "44444444-4444-4444-4444-444444444444";
